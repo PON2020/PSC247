@@ -33,3 +33,27 @@ ggplot(data=data,mapping = aes(x=neuroticism,y=first_fixation_duration, color=at
   geom_point(alpha=0.01)+
   geom_smooth(method="lm")+
   ylab("first fixation duration (ms)")
+# simulate the second set of data using a different beta3
+# simulate FFD using the formula: 
+# FFD = beta1 * attachment_type + beta2 * neuroticism + beta3 * attachment_type * neuroticism + error
+error <- 200
+beta1 <- -20
+beta2 <- 0.05
+beta3 <- 0.1
+first_fixation_duration <- beta1 * attachment_type + beta2 * neuroticism + beta3 * attachment_type * neuroticism + error
+# the simulated is stored in a tibble
+data <- tibble(first_fixation_duration,attachment_type,neuroticism)
+data$attachment_type <- as.factor(data$attachment_type)
+# rename the attachment type 
+data$attachment_type <- recode(data$attachment_type,
+                               "0" = "NP1",
+                               "1" = "NP2"
+)
+head(data)
+# build a linear modal
+lm(data=data,first_fixation_duration~attachment_type*neuroticism)
+# plot the change of FFD with nueroticism by attachment style
+ggplot(data=data,mapping = aes(x=neuroticism,y=first_fixation_duration, color=attachment_type))+
+  geom_point(alpha=0.01)+
+  geom_smooth(method="lm")+
+  ylab("first fixation duration (ms)")
